@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "deps:load": "deno cache --reload --lock=lock.json deps.ts",
+    "deps:update": "deno cache --lock=lock.json --lock-write deps.ts",
+
+    // --allow-env should be restricted to the ones consumed by this app, and not to all, but dotenv does not support that.
+    // For our testing app that is ok, but for production use I would not use dotenv for now.
+    // will be fixed in some of the next releases of deno_std!! \o/
+    "run": "deno run --lock=lock.json --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
+    "run:debug": "deno run --inspect-brk --lock=lock.json --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts"
+  }
+}
