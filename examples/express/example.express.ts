@@ -4,11 +4,7 @@ import {} from "https://deno.land/std@0.154.0/node/http.ts";
 
 import express from "npm:express";
 
-import {
-  html,
-  HTMLTemplateGenerator,
-  renderToStream,
-} from "/Users/falk/code/deno.land/x/staggard/main.ts";
+import { html, HTMLTemplateGenerator, renderToStream } from "../../main.ts";
 
 import { delayedContent } from "./delayed_content.ts";
 
