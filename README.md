@@ -15,7 +15,7 @@ To have a better understanding of how things work, please give a look to the
 examples. But the code below shows the basic usage:
 
 ```
-import { html, HTMLTemplateGenerator, renderToStream } from "../main.ts";
+import { html, HTMLTemplateGenerator, renderToStream } from "https://deno.land/x/staggard/main.ts";
 
 const viewComponent = (content: HTMLTemplateGenerator) =>
   html`<p>${"hello"}</p> <p>${asyncFunc("world!")}</p>`;
