@@ -15,7 +15,7 @@ async function* resolver(parts: TemplateStringKeyList = []): AsyncGenerator {
     if ((part as TemplateString).isTemplateString) { // just return the static string parts of template literals
       yield part;
     } else if (Array.isArray(part)) { // key is a list of more sub templates, that have to be rendered sequentially
-      yield* await resolver(part);
+      yield* resolver(part);
     } else if (
       typeof (part as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
         "function"
