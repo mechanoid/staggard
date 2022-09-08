@@ -35,6 +35,20 @@ This allows some fancy stuff like aborting such calls, when they take too long,
 and replace them by client side islands, that translude that content at client
 time. (See the express example for more details about that.)
 
+## Content Escaping
+
+All keys passed to the `html` tagged template function are escaped when they are
+not itself generators. If you pass a generator function itself has to escape
+content, when before passing it to yield.
+
+It can be considered as safe to pass `html` generators as keys.
+
+```
+renderToStream(html`<div>${"<script>console.log("hello, world!")</script>"}</div>`) # => "<div>&lt;script&gt;console.log(&quot;hello, world!&quot;)&lt;/script&gt;</div>"
+
+renderToStream(html`<div>${html`<script>console.log("hello, world!")</script>`}</div>`) # => "<div><script>console.log("hello, world!")</script></div>"
+```
+
 ## Tasks
 
 Tasks can be invoked with `deno task [TASKNAME]`:

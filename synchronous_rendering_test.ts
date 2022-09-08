@@ -90,8 +90,21 @@ Deno.test("render snippet with async sub-sub templates", async () => {
 });
 
 Deno.test("escape input keys that are not `html` tagged templates itself by default", async () => {
-  const message = "<script>console.log()</script>";
+  const message = '<script>console.log("hello, world!")</script>';
   const template = html`<div>${message}</div>`;
   const result = await renderToString(template);
-  assertEquals(result, "<div>&lt;script&gt;console.log()&lt;/script&gt;</div>");
+  assertEquals(
+    result,
+    "<div>&lt;script&gt;console.log(&quot;hello, world!&quot;)&lt;/script&gt;</div>",
+  );
+});
+
+Deno.test("do not escape input keys that are `html` tagged templates itself", async () => {
+  const message = html`<script>console.log("hello, world!")</script>`;
+  const template = html`<div>${message}</div>`;
+  const result = await renderToString(template);
+  assertEquals(
+    result,
+    '<div><script>console.log("hello, world!")</script></div>',
+  );
 });
