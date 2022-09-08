@@ -8,6 +8,8 @@
     // will be fixed in some of the next releases of deno_std!! \o/
     "run": "deno run --lock=lock.json --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
     "run:debug": "deno run --inspect-brk --lock=lock.json --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
-    "run:example:express": "deno run --unstable --allow-read --allow-env --allow-net --no-check ./examples/express/example.express.ts"
+    "run:example:express": "deno run --unstable --allow-read --allow-env --allow-net --no-check ./examples/express/example.express.ts",
+    "run:example:synch": "deno run examples/example.synch.ts",
+    "run:example:stream": "deno run examples/example.stream.ts"
   }
 }
