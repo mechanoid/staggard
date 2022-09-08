@@ -5,7 +5,8 @@ A minimal, yet streamable, tagged base HTML template language for deno.
 ## API
 
 - `html` - tagged template literal function to declare simple minimal components
-- `renderToString` - renders given html template components to a string
+- `renderToString` - renders given html template components to a string. The
+  complete template will be resolved before
 - `renderToStream` - writes the template parts to the stream, once ready. Waits
   for async content, which results in iterative "write when ready" rendering.
 
@@ -36,11 +37,17 @@ time. (See the express example for more details about that.)
 
 ## Tasks
 
+Tasks can be invoked with `deno task [TASKNAME]`:
+
 - `deps:load` - loads dependencies to deno cache if deps.ts has beed updated
   remotely
 - `deps:update` - writes updated dependencies to deps.ts
 - `run` - kicks off the service
 - `run:debug` - starts the service in debug mode
+- `run:example:synch` - runs a synchronous rendering example
+- `run:example:stream` - runs a stream rendering example
+- `run:example:express` - starts an express app at localhost:3001, showing an
+  example integration with fallback handling.
 
 ## Settings
 
