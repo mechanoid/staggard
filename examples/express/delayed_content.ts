@@ -1,5 +1,10 @@
+import { html, HTMLTemplateGenerator } from "../../main.ts";
+
 const timeout = 300;
-export const delayedContent = (text: string, id: number): Promise<string> => {
+export const delayedContent = (
+  text: string,
+  id: number,
+): Promise<string | HTMLTemplateGenerator> => {
   const controller = new AbortController();
 
   return Promise.race([
@@ -28,7 +33,7 @@ export const delayedContent = (text: string, id: number): Promise<string> => {
         console.log(`content "${id}" canceled, due to timeout`);
         controller.signal.removeEventListener("abort", abortHandler);
         return resolve(
-          `<my-fallback-component src="/${id}"></my-fallback-component>`,
+          html`<my-fallback-component src="/${id}"></my-fallback-component>`,
         );
       }, timeout);
 
@@ -36,6 +41,6 @@ export const delayedContent = (text: string, id: number): Promise<string> => {
         clearTimeout(to);
       };
       controller.signal.addEventListener("abort", abortHandler);
-    }) as Promise<string>,
+    }) as Promise<HTMLTemplateGenerator>,
   ]);
 };

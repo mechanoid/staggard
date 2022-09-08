@@ -21,9 +21,19 @@ async function* resolver(parts: TemplateStringKeyList = []): AsyncGenerator {
         "function"
     ) { // key is itself an iterator
       yield* (part as HTMLTemplateGenerator);
-    } else { // part is now a key provided to a template, that should be something like a string
-      const property: string = await part as string;
-      yield escapeHtml(property);
+    } else {
+      // part is now a key provided to a template, that should be something like a string
+      // Itself might be a new `html` generator, so that we pass yield then to it.
+      const resolved = await part;
+
+      if (
+        typeof (resolved as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
+          "function"
+      ) {
+        yield* (resolved as HTMLTemplateGenerator);
+      } else {
+        yield escapeHtml(resolved as string);
+      }
     }
   }
 }
