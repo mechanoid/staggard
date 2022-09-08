@@ -1,5 +1,8 @@
 type TemplateStringKeyList = Array<unknown>;
 
+import { escapeHtml } from "./deps.ts";
+import { TemplateString } from "./template_string.ts";
+
 export type HTMLTemplateGenerator = AsyncGenerator;
 
 interface ResponseStream {
@@ -9,12 +12,18 @@ interface ResponseStream {
 
 async function* resolver(parts: TemplateStringKeyList = []): AsyncGenerator {
   for (const part of parts) {
-    if (Array.isArray(part)) { // key is a list of more sub templates, that have to be rendered sequentially
+    if ((part as TemplateString).isTemplateString) { // just return the static string parts of template literals
+      yield part;
+    } else if (Array.isArray(part)) { // key is a list of more sub templates, that have to be rendered sequentially
       yield* await resolver(part);
-    } else if ((part as HTMLTemplateGenerator)?.next) { // key is itself an iterator
+    } else if (
+      typeof (part as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
+        "function"
+    ) { // key is itself an iterator
       yield* (part as HTMLTemplateGenerator);
-    } else {
-      yield await part;
+    } else { // part is now a key provided to a template, that should be something like a string
+      const property: string = await part as string;
+      yield escapeHtml(property);
     }
   }
 }
@@ -23,9 +32,12 @@ async function* resolver(parts: TemplateStringKeyList = []): AsyncGenerator {
 // and a second property with dynamic keys. Because we want to run over
 // the given parts sequentially we mix them alternatingly to a single array.
 const mixUp = (a1: TemplateStringsArray, a2: TemplateStringKeyList = []) => {
-  return a1.map((el, i) => [el, a2[i]]).reduce((res, curr) => {
-    return res.concat(curr);
-  }, []).filter((x) => !!x);
+  return a1.map((el, i) => [new TemplateString(el), a2[i]]).reduce(
+    (res, curr) => {
+      return res.concat(curr);
+    },
+    [],
+  ).filter((x) => !!x);
 };
 
 // Tagged template literal function

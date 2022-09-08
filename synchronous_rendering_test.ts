@@ -19,7 +19,13 @@ Deno.test("render simple doc with doctype", async () => {
     <body></body>
     </html>
   `;
-  const template = html`${templateLiteral}`;
+  const template = html`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head><title>Document</title></head>
+    <body></body>
+    </html>
+  `;
   const result = await renderToString(template);
 
   assertEquals(result, templateLiteral);
@@ -81,4 +87,11 @@ Deno.test("render snippet with async sub-sub templates", async () => {
     result,
     "<div><p>wait for it! Hello,</p><p><em>you async emphasized world!</em></p></div>",
   );
+});
+
+Deno.test("escape input keys that are not `html` tagged templates itself by default", async () => {
+  const message = "<script>console.log()</script>";
+  const template = html`<div>${message}</div>`;
+  const result = await renderToString(template);
+  assertEquals(result, "<div>&lt;script&gt;console.log()&lt;/script&gt;</div>");
 });
