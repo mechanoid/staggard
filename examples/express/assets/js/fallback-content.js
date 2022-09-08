@@ -1,5 +1,6 @@
 customElements.define('my-fallback-component', class FallbackComponent extends HTMLElement {
-  connectedCallback() {
+  async connectedCallback() {
+    console.log('connected!!!!');
     this.innerHTML = '...'
 
     if (this.hasAttribute('src')) {
