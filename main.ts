@@ -27,6 +27,8 @@ async function* resolver(parts: TemplateStringKeyList = []): AsyncGenerator {
       const resolved = await part;
 
       if (
+        // sometimes an asynchronous call results also in an `html` tagged template.
+        // Such should not be escaped but handed to yield. (E.g. when a canceled promise results in alternative html`...` content.)
         typeof (resolved as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
           "function"
       ) {
