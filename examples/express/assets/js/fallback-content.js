@@ -1,10 +1,10 @@
 customElements.define('my-fallback-component', class FallbackComponent extends HTMLElement {
   async connectedCallback() {
-    console.log('connected!!!!');
     this.innerHTML = '...'
 
-    if (this.hasAttribute('src')) {
+    if (this.hasAttribute('src') && this.getAttribute('src') !== '') {
       this.url = this.getAttribute('src')
+      console.log(`refetch: ${this.url}`);
       const response = await fetch(this.url)
 
       if (response.ok) {

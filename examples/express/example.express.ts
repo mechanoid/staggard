@@ -4,30 +4,14 @@ import {} from "https://deno.land/std@0.154.0/node/http.ts";
 
 import express from "npm:express";
 
-import { html, HTMLTemplateGenerator, renderToStream } from "../../main.ts";
+import { html, renderToStream } from "../../main.ts";
+import { document, header, paragraph } from "./components/index.ts";
 
 import { delayedContent } from "./delayed_content.ts";
 
 import data from "./data.json" assert { type: "json" };
 
 const __dirname = new URL(".", import.meta.url).pathname;
-
-const htmlDocument = (content: HTMLTemplateGenerator) =>
-  html`
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Document</title>
-      <script src="/assets/js/fallback-content.js" type="module" async></script>
-  </head>
-  <body>
-    ${content}
-  </body>
-  </html>
-`;
 
 const app = express();
 
@@ -46,15 +30,30 @@ app.get(
   },
 );
 
+// we pass a delay function to simulate long running promises to the view layer
+// that evaluated while the first lines are send to the client already.
+// The processes are cancelled when take to long, so we pass in some fallback content,
+// in the form of `<my-fallback-component src="/:content-id"></my-fallback-component>.`
+//
+// The `<my-fallback-component />` is evaluated at client-side, to refetch the content from
+// the server in an asynchronous manner.
 app.get("/", async (_: express.ClientRequest, res: express.ServerResponse) => {
+  const withIncreasingDelay = delayedContent({ timeout: 600 });
+  await new Promise((resolve, _reject) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 2500);
+  });
   await renderToStream(
     res,
-    htmlDocument(html`
-    <h1>Headline!</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet repellendus magnam vitae, voluptatibus totam officiis illo molestiae recusandae ea porro eum harum, doloribus neque accusamus iusto tenetur nulla adipisci? Quisquam.</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet repellendus magnam vitae, voluptatibus totam officiis illo molestiae recusandae ea porro eum harum, doloribus neque accusamus iusto tenetur nulla adipisci? Quisquam.</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet repellendus magnam vitae, voluptatibus totam officiis illo molestiae recusandae ea porro eum harum, doloribus neque accusamus iusto tenetur nulla adipisci? Quisquam.</p>
-    ${data.map((d, i) => html`<p>${delayedContent(d, i)}</p>`)}
+    document(html`
+      ${header("Express Example")}
+      ${paragraph("Some static text, that is rendered without lookup!")}
+      ${
+      data.map((d, i) =>
+        paragraph(withIncreasingDelay(d, i) as Promise<string>)
+      )
+    }
   `),
   );
 });
