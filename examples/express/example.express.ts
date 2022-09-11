@@ -18,6 +18,7 @@ const app = express();
 const assetPath = resolve(__dirname, "./assets");
 
 // NOTE! express.static does not work properly, because sendFile seams broken, therefore singlefile sending
+// app.use("/assets", express.static("./assets"));
 app.get(
   "/assets/js/fallback-content.js",
   async (_req: express.ClientRequest, res: express.ServerResponse) => {
