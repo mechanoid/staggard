@@ -1,8 +1,10 @@
 import { resolve } from "https://deno.land/std@0.155.0/path/mod.ts";
 
 import express from "npm:express";
+import type { NextFunction, Request, Response } from "npm:express";
 
 import { html, renderToStream } from "../../main.ts";
+import type { HTMLTemplateGenerator } from "../../main.ts";
 import { document, header, paragraph } from "./components/index.ts";
 
 import { delayedContent } from "./delayed_content.ts";
@@ -29,6 +31,14 @@ app.get(
   },
 );
 
+app.use((_req: Request, res: Response, next: NextFunction) => {
+  res.render = async (content: HTMLTemplateGenerator) => {
+    await renderToStream(res, content);
+    res.end();
+  };
+  next();
+});
+
 // we pass a delay function to simulate long running promises to the view layer
 // that evaluated while the first lines are send to the client already.
 // The processes are cancelled when take to long, so we pass in some fallback content,
@@ -43,8 +53,10 @@ app.get("/", async (_: express.ClientRequest, res: express.ServerResponse) => {
       resolve(true);
     }, 2500);
   });
-  await renderToStream(
-    res,
+
+  console.log("RES RENDER");
+
+  res.render(
     document(html`
       ${header("Express Example")}
       ${paragraph("Some static text, that is rendered without lookup!")}
