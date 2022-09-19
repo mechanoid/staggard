@@ -1,7 +1,5 @@
 import { resolve } from "https://deno.land/std@0.155.0/path/mod.ts";
 
-import {} from "https://deno.land/std@0.155.0/node/http.ts";
-
 import express from "npm:express";
 
 import { html, renderToStream } from "../../main.ts";
