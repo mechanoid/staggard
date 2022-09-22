@@ -46,15 +46,8 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 //
 // The `<my-fallback-component />` is evaluated at client-side, to refetch the content from
 // the server in an asynchronous manner.
-app.get("/", async (_: express.ClientRequest, res: express.ServerResponse) => {
+app.get("/", (_: express.ClientRequest, res: express.ServerResponse) => {
   const withIncreasingDelay = delayedContent({ timeout: 600 });
-  await new Promise((resolve, _reject) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 2500);
-  });
-
-  console.log("RES RENDER");
 
   res.render(
     document(html`
