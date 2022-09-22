@@ -5,7 +5,7 @@ import { TemplateString } from "./template_string.ts";
 
 export type HTMLTemplateGenerator = AsyncGenerator;
 
-interface ResponseStream {
+export interface ResponseStream {
   write(chunk: Uint8Array): unknown;
   close?(): void;
 }
