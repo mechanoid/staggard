@@ -16,16 +16,20 @@ const htmlDocument = (content: HTMLTemplateGenerator) =>
   </html>
 `;
 
-const message = "Welcome!";
-const delayedContent = (text: string): Promise<string> =>
+const delayedContent = (text: string, delay = 2000): Promise<string> =>
   new Promise((resolve, _reject) => {
-    setTimeout(() => resolve(text), 2000);
+    setTimeout(() => resolve(text), delay);
   });
+
+const contentToBeResolvedBeforeRendering = await delayedContent(
+  "Welcome!",
+  100,
+);
 
 await renderToStream(
   Deno.stdout,
   htmlDocument(html`
-  <h1>${message}</h1>
+  <h1>${contentToBeResolvedBeforeRendering}</h1>
   <p>${delayedContent("Hello World!")}</p>
 `),
 );
