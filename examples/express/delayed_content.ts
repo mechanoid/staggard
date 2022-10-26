@@ -1,4 +1,4 @@
-import { html, HTMLTemplateGenerator } from "../../main.ts";
+import { html, HTMLTemplate } from "../../main.ts";
 
 export const delayedContent = ({ timeout = 500 } = {}) => {
   let counter = 0;
@@ -6,7 +6,7 @@ export const delayedContent = ({ timeout = 500 } = {}) => {
   return ((
     text: string,
     id: number,
-  ): Promise<string | HTMLTemplateGenerator> => {
+  ): Promise<string | HTMLTemplate> => {
     counter++;
     const controller = new AbortController();
 
@@ -48,7 +48,7 @@ export const delayedContent = ({ timeout = 500 } = {}) => {
           clearTimeout(to);
         };
         controller.signal.addEventListener("abort", abortHandler);
-      }) as Promise<HTMLTemplateGenerator>,
+      }) as Promise<HTMLTemplate>,
     ]);
   });
 };

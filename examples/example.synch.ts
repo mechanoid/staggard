@@ -1,6 +1,6 @@
-import { html, HTMLTemplateGenerator, renderToString } from "../main.ts";
+import { html, HTMLTemplate, renderToString } from "../main.ts";
 
-const htmlDocument = (content: HTMLTemplateGenerator) =>
+const htmlDocument = (content: HTMLTemplate) =>
   html`
   <!DOCTYPE html>
   <html lang="en">

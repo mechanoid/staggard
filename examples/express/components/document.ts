@@ -1,6 +1,6 @@
-import { html, HTMLTemplateGenerator } from "../../../main.ts";
+import { html, HTMLTemplate } from "../../../main.ts";
 
-export const document = (content: HTMLTemplateGenerator) =>
+export const document = (content: HTMLTemplate) =>
   html`
   <!DOCTYPE html>
   <html lang="en">

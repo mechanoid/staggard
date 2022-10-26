@@ -4,7 +4,7 @@ import express from "npm:express";
 import type { NextFunction, Request, Response } from "npm:express";
 
 import { html, renderToStream } from "../../main.ts";
-import type { HTMLTemplateGenerator } from "../../main.ts";
+import type { HTMLTemplate } from "../../main.ts";
 import { document, header, paragraph } from "./components/index.ts";
 
 import { delayedContent } from "./delayed_content.ts";
@@ -32,7 +32,7 @@ app.get(
 );
 
 app.use((_req: Request, res: Response, next: NextFunction) => {
-  res.render = async (content: HTMLTemplateGenerator) => {
+  res.render = async (content: HTMLTemplate) => {
     await renderToStream(res, content);
     res.end();
   };
