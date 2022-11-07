@@ -108,3 +108,24 @@ Deno.test("do not escape input keys that are `html` tagged templates itself", as
     '<div><script>console.log("hello, world!")</script></div>',
   );
 });
+
+Deno.test("escape attributes properly", async () => {
+  const placeholder = "this is a placeholder text";
+  const template = html`<input type="text" placeholder="${placeholder}" />`;
+  const result = await renderToString(template);
+  assertEquals(
+    result,
+    '<input type="text" placeholder="this is a placeholder text" />',
+  );
+});
+
+Deno.test("escape attributes properly with conditional props", async () => {
+  const placeholder = "this is a placeholder text";
+  const template =
+    html`<input type="text" ${html`placeholder="${placeholder}"`} />`;
+  const result = await renderToString(template);
+  assertEquals(
+    result,
+    '<input type="text" placeholder="this is a placeholder text" />',
+  );
+});
