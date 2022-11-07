@@ -41,6 +41,7 @@ async function* resolver(
         yield* (resolved as HTMLTemplateGenerator);
       } else {
         // anything else should be treated as a string and therefore be escaped for control signs
+        // yield escapeHtml(resolved as string);
         yield escapeHtml(resolved as string);
       }
     }

@@ -129,3 +129,18 @@ Deno.test("escape attributes properly with conditional props", async () => {
     '<input type="text" placeholder="this is a placeholder text" />',
   );
 });
+
+Deno.test("escape attributes properly with conditional props", async () => {
+  const attributes = {
+    placeholder: "this is a placeholder text",
+    required: "required",
+  };
+  const template = html`<input type="text" ${
+    Object.entries(attributes).map(([prop, val]) => html`${prop}="${val}" `)
+  } />`;
+  const result = await renderToString(template);
+  assertEquals(
+    result,
+    '<input type="text" placeholder="this is a placeholder text" required="required"  />',
+  );
+});
