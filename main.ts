@@ -9,7 +9,7 @@ export type HTMLTemplate =
   | Promise<HTMLTemplateGenerator>;
 
 export interface ResponseStream {
-  write(chunk: Uint8Array): unknown;
+  write(chunk: Uint8Array | string): unknown;
   close?(): void;
 }
 
