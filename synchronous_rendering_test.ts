@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.154.0/testing/asserts.ts";
-import { html, renderToString } from "./main.ts";
+import { attr, html, renderToString } from "./main.ts";
 
 const sayHelloSync = (text: string): string => text;
 const sayHelloAsync = (text: string): Promise<string> =>
@@ -92,7 +92,9 @@ Deno.test("render snippet with async sub-sub templates", async () => {
 Deno.test("escape input keys that are not `html` tagged templates itself by default", async () => {
   const message = '<script>console.log("hello, world!")</script>';
   const template = html`<div>${message}</div>`;
+
   const result = await renderToString(template);
+
   assertEquals(
     result,
     "<div>&lt;script&gt;console.log(&quot;hello, world!&quot;)&lt;/script&gt;</div>",
@@ -102,45 +104,57 @@ Deno.test("escape input keys that are not `html` tagged templates itself by defa
 Deno.test("do not escape input keys that are `html` tagged templates itself", async () => {
   const message = html`<script>console.log("hello, world!")</script>`;
   const template = html`<div>${message}</div>`;
+
   const result = await renderToString(template);
+
   assertEquals(
     result,
     '<div><script>console.log("hello, world!")</script></div>',
   );
 });
 
-Deno.test("escape attributes properly", async () => {
-  const placeholder = "this is a placeholder text";
+Deno.test("escape simple attributes properly", async () => {
+  const placeholder = "this is a placeholder& text";
   const template = html`<input type="text" placeholder="${placeholder}" />`;
+
   const result = await renderToString(template);
+
   assertEquals(
     result,
-    '<input type="text" placeholder="this is a placeholder text" />',
+    '<input type="text" placeholder="this is a placeholder&amp; text" />',
   );
 });
 
 Deno.test("escape attributes properly with conditional props", async () => {
   const placeholder = "this is a placeholder text";
-  const template =
-    html`<input type="text" ${html`placeholder="${placeholder}"`} />`;
+  const template = html`<input type="text"
+    ${attr("placeholder", placeholder)}
+    ${attr("fake-false-attribute", "false")}
+    ${attr("falsi-attribute", false)}
+    ${attr("nullish-attribute", null)}
+  />`;
+
   const result = await renderToString(template);
+
   assertEquals(
-    result,
-    '<input type="text" placeholder="this is a placeholder text" />',
+    result.replaceAll("\n", "").replaceAll(/\s{2,}/g, " "),
+    '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" />',
   );
 });
 
-Deno.test("escape attributes properly with conditional props", async () => {
+Deno.test("render multiple attributes properly encoded", async () => {
   const attributes = {
-    placeholder: "this is a placeholder text",
+    placeholder: "this is a placeholder& text",
     required: "required",
   };
   const template = html`<input type="text" ${
-    Object.entries(attributes).map(([prop, val]) => html`${prop}="${val}" `)
+    Object.entries(attributes).map(([prop, val]) => attr(prop, val))
   } />`;
+
   const result = await renderToString(template);
+
   assertEquals(
     result,
-    '<input type="text" placeholder="this is a placeholder text" required="required"  />',
+    '<input type="text" placeholder="this is a placeholder&amp; text" required="required"  />',
   );
 });

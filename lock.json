@@ -1,1 +1,6 @@
-{}
+{
+  "version": "2",
+  "remote": {
+    "https://deno.land/x/escape_html@1.0.0/mod.ts": "fd6671533b7f8bbf267047e3d1a20786837b3285c31552fa5f82f1e34f6e37c3"
+  }
+}

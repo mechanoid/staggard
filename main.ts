@@ -2,6 +2,10 @@ type TemplateStringKeyList = unknown[];
 
 import { escapeHtml } from "./deps.ts";
 import { TemplateString } from "./template_string.ts";
+import {
+  type AttributeValue,
+  TemplateAttribute,
+} from "./template_attribute.ts";
 
 export type HTMLTemplateGenerator = AsyncGenerator;
 export type HTMLTemplate =
@@ -25,6 +29,8 @@ async function* resolver(
       yield part;
     } else if (Array.isArray(part)) { // key is a list of more sub templates, that have to be rendered sequentially
       yield* resolver(part);
+    } else if (part instanceof TemplateAttribute) { // key is a list of more sub templates, that have to be rendered sequentially
+      yield part.toString();
     } else if (
       typeof (part as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
         "function"
@@ -61,11 +67,19 @@ const mixUp = (a1: TemplateStringsArray, a2: TemplateStringKeyList = []) => {
 };
 
 // Tagged template literal function
+//
 // Usage: html`<some-snippet /><other-snippet />`
 export const html = (
   strings: TemplateStringsArray,
   ...keys: TemplateStringKeyList
 ): HTMLTemplateGenerator => resolver(mixUp(strings, keys));
+
+// Attribute function for dynamically added attributes,
+// that can be rendered conditionally, depending on the attribute value.
+//
+// Usage: html`<some-snippet ${attr("foo", "bar")} />`
+export const attr = (key: string, value: AttributeValue): TemplateAttribute =>
+  new TemplateAttribute(key, value);
 
 // renderer to a fixed output string, resolving all async values provided to the template keys
 export const renderToString = async (
