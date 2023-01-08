@@ -5,6 +5,7 @@ A minimal, yet streamable, tagged base HTML template language for deno.
 ## API
 
 - `html` - tagged template literal function to declare simple minimal components
+- `attr` - function to declare dynamic html attributes with escaped values
 - `renderToString` - renders given html template components to a string. The
   complete template will be resolved before
 - `renderToStream` - writes the template parts to the stream, once ready. Waits
@@ -38,7 +39,7 @@ time. (See the express example for more details about that.)
 ## Content Escaping
 
 All keys passed to the `html` tagged template function are escaped when they are
-not itself generators. If you pass a generator function itself has to escape
+not itself generators. If you pass a generator function itself it has to escape
 content, when before passing it to yield.
 
 It can be considered as safe to pass `html` generators as keys.
@@ -49,13 +50,29 @@ renderToStream(html`<div>${"<script>console.log("hello, world!")</script>"}</div
 renderToStream(html`<div>${html`<script>console.log("hello, world!")</script>`}</div>`) # => "<div><script>console.log("hello, world!")</script></div>"
 ```
 
+### Attributes and Escaping
+
+If you want to render attributes in a conditional or dynamic manner, you cannot
+rely on plain template literals as they would be escaped. So the following
+example will not work properly.
+
+```
+const range = (min) => html`<input type="range" ${min !== undefined ? `min="${min}"` : ''}` ⚡️
+```
+
+If you want to use render properties as a template literal value you need to use
+the `attr` function.
+
+```
+const range = (min) => html`<input type="range" ${min !== undefined ? attr('min', min) : ''}` ✅
+```
+
 ## Tasks
 
 Tasks can be invoked with `deno task [TASKNAME]`:
 
 - `deps:load` - loads dependencies to deno cache if deps.ts has beed updated
   remotely
-- `deps:update` - writes updated dependencies to deps.ts
 - `run` - kicks off the service
 - `run:debug` - starts the service in debug mode
 - `run:example:synch` - runs a synchronous rendering example
