@@ -48,7 +48,7 @@ async function* resolver(
       } else {
         // anything else should be treated as a string and therefore be escaped for control signs
         // yield escapeHtml(resolved as string);
-        yield escapeHtml(resolved as string);
+        yield escapeHtml((resolved?.toString()) || "" as string);
       }
     }
   }
@@ -57,13 +57,16 @@ async function* resolver(
 // tagged template literals come with an array for the static strings,
 // and a second property with dynamic keys. Because we want to run over
 // the given parts sequentially we mix them alternatingly to a single array.
-const mixUp = (a1: TemplateStringsArray, a2: TemplateStringKeyList = []) => {
+export const mixUp = (
+  a1: TemplateStringsArray,
+  a2: TemplateStringKeyList = [],
+) => {
   return a1.map((el, i) => [new TemplateString(el), a2[i]]).reduce(
     (res, curr) => {
       return res.concat(curr);
     },
     [],
-  ).filter((x) => !!x);
+  ).filter((x) => x !== null && x !== undefined);
 };
 
 // Tagged template literal function

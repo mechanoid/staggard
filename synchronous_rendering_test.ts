@@ -1,5 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.154.0/testing/asserts.ts";
-import { attr, html, renderToString } from "./main.ts";
+import { attr, html, mixUp, renderToString } from "./main.ts";
+import { TemplateString } from "./template_string.ts";
 
 const sayHelloSync = (text: string): string => text;
 const sayHelloAsync = (text: string): Promise<string> =>
@@ -35,6 +36,18 @@ Deno.test("render snippet with simple key property", async () => {
   const template = html`<div>${"hello, world!"}</div>`;
   const result = await renderToString(template);
   assertEquals(result, "<div>hello, world!</div>");
+});
+
+Deno.test("render snippet with number as property", async () => {
+  const template = html`<div>${4711}</div>`;
+  const result = await renderToString(template);
+  assertEquals(result, "<div>4711</div>");
+});
+
+Deno.test("render snippet with zero as property", async () => {
+  const template = html`<div>${0}</div>`;
+  const result = await renderToString(template);
+  assertEquals(result, "<div>0</div>");
 });
 
 Deno.test("render snippet with html tag collection key property", async () => {
@@ -156,5 +169,27 @@ Deno.test("render multiple attributes properly encoded", async () => {
   assertEquals(
     result,
     '<input type="text" placeholder="this is a placeholder&amp; text" required="required"  />',
+  );
+});
+
+Deno.test("mixing up to arrays, should result in an alternating array", () => {
+  const a = ["a", "b", "c", "d"] as any;
+  a.raw = ["a", "b", "c", "d"];
+
+  const b = ["val", 0, null, undefined];
+  const mixed = mixUp(a as TemplateStringsArray, b);
+
+  assertEquals(
+    mixed.length,
+    6,
+  );
+
+  const resolved = mixed.map((el: TemplateString | any) =>
+    el.isTemplateString ? el.content : el
+  );
+
+  assertEquals(
+    resolved,
+    ["a", "val", "b", 0, "c", "d"],
   );
 });
