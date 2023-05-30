@@ -93,16 +93,15 @@ export const renderToString = async (
 
   while (true) {
     const part = await (await template).next();
-    const value = options.minify ? minify(part.value) : part.value;
 
-    result.push(value);
+    result.push(part.value);
 
     if (part.done) {
       break;
     }
   }
 
-  return result.join("");
+  return options.minify ? minify(result.join("")) : result.join("");
 };
 
 export const renderToStream = async (
