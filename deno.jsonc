@@ -1,11 +1,11 @@
 {
   "tasks": {
-    "deps:load": "deno cache --reload main.ts",
+    "deps:load": "deno cache --reload --lock=deno.lock main.ts",
 
     // --allow-env should be restricted to the ones consumed by this app, and not to all, but dotenv does not support that.
     // For our testing app that is ok, but for production use I would not use dotenv for now.
     // will be fixed in some of the next releases of deno_std!! \o/
-    "run": "deno run --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
+    "run": "deno run --lock=deno.lock --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
     "run:debug": "deno run --inspect-brk --cached-only --allow-env=PORT --allow-read=.env,.env.defaults ./main.ts",
     "run:example:express": "deno run --unstable --allow-read --allow-env --allow-net --no-check ./examples/express/example.express.ts",
     "run:example:synch": "deno run examples/example.synch.ts",
