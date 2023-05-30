@@ -71,8 +71,8 @@ const range = (min) => html`<input type="range" ${min !== undefined ? attr('min'
 
 Tasks can be invoked with `deno task [TASKNAME]`:
 
-- `deps:load` - loads dependencies to deno cache if deps.ts has beed updated
-  remotely
+- `deps:load` - loads dependencies to deno cache if dependencies have been
+  updated remotely
 - `run` - kicks off the service
 - `run:debug` - starts the service in debug mode
 - `run:example:synch` - runs a synchronous rendering example

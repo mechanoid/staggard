@@ -1,4 +1,4 @@
-import { escapeHtml } from "./deps.ts";
+import { escapeHtml } from "escape_html";
 
 export type AttributeValue = string | number | boolean | null | undefined;
 

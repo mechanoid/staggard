@@ -1,6 +1,6 @@
 type TemplateStringKeyList = unknown[];
 
-import { escapeHtml } from "./deps.ts";
+import { escapeHtml } from "escape_html";
 import { TemplateString } from "./template_string.ts";
 import {
   type AttributeValue,
