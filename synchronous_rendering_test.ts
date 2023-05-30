@@ -193,3 +193,22 @@ Deno.test("mixing up to arrays, should result in an alternating array", () => {
     ["a", "val", "b", 0, "c", "d"],
   );
 });
+
+Deno.test("minify multiline tag with attributes", async () => {
+  const placeholder = "this is a placeholder text";
+  const template = html`<input type="text"
+    ${attr("placeholder", placeholder)}
+    ${attr("fake-false-attribute", "false")}
+    ${attr("falsi-attribute", false)}
+    ${attr("truey-attribute", true)}
+    ${attr("nullish-attribute", null)}
+    ${attr("data-test", 5)}
+  />`;
+
+  const result = await renderToString(template, { minify: true });
+
+  assertEquals(
+    result.replaceAll("\n", "").replaceAll(/\s{2,}/g, " "),
+    '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" truey-attribute data-test="5" />',
+  );
+});

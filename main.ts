@@ -87,13 +87,15 @@ export const attr = (key: string, value: AttributeValue): TemplateAttribute =>
 // renderer to a fixed output string, resolving all async values provided to the template keys
 export const renderToString = async (
   template: HTMLTemplate,
+  options: { minify?: boolean } = {},
 ): Promise<string> => {
   const result = [];
 
   while (true) {
     const part = await (await template).next();
-    result.push(part.value);
-    // console.log(part.value);
+    const value = options.minify ? minify(part.value) : part.value;
+
+    result.push(value);
 
     if (part.done) {
       break;
@@ -106,12 +108,15 @@ export const renderToString = async (
 export const renderToStream = async (
   stream: ResponseStream,
   template: HTMLTemplate,
+  options: { minify?: boolean } = {},
 ) => {
   const encoder = new TextEncoder();
   while (true) {
     try {
       const part = await (await template).next();
-      stream.write(encoder.encode(part.value));
+      const value = options.minify ? minify(part.value) : part.value;
+
+      stream.write(encoder.encode(value));
 
       if (part.done) {
         stream.close ? stream.close() : null;
@@ -123,3 +128,7 @@ export const renderToStream = async (
     }
   }
 };
+
+function minify(text: string) {
+  return text?.toString().replace(/\s+/g, " ");
+}

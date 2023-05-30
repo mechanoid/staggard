@@ -12,7 +12,7 @@ export class TemplateAttribute {
   }
 
   get isBoolean() {
-    return this.value === true || this.value === false;
+    return typeof this.value === "boolean";
   }
 
   toString() {
