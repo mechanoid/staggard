@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.154.0/testing/asserts.ts";
+import { assertEquals } from "std/testing/asserts.ts";
 import { attr, html, mixUp, renderToString } from "./main.ts";
 import { TemplateString } from "./template_string.ts";
 
