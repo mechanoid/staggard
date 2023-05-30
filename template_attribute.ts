@@ -17,7 +17,7 @@ export class TemplateAttribute {
 
   toString() {
     if (this.isBoolean) {
-      return this.value ? this.key : "";
+      return this.value ? `${this.key} ` : "";
     }
 
     return this.value !== undefined && this.value !== null
