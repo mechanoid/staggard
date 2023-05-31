@@ -212,3 +212,17 @@ Deno.test("minify multiline tag with attributes", async () => {
     '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" truey-attribute data-test="5" />',
   );
 });
+
+Deno.test("camelCased attribute names should be rendered in kebap-case", async () => {
+  const dataAttribute = `some-data`;
+  const template = html`<input type="text" ${
+    attr("dataFubar", dataAttribute)
+  } />`;
+
+  const result = await renderToString(template, { minify: true });
+
+  assertEquals(
+    result,
+    '<input type="text" data-fubar="some-data" />',
+  );
+});

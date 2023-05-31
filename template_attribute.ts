@@ -7,7 +7,7 @@ export class TemplateAttribute {
   value: AttributeValue;
 
   constructor(key: string, value: AttributeValue) {
-    this.key = key;
+    this.key = kebabize(key);
     this.value = value;
   }
 
@@ -25,3 +25,7 @@ export class TemplateAttribute {
       : "";
   }
 }
+
+const kebabize = (str: string) => {
+  return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+};
