@@ -131,3 +131,10 @@ export const renderToStream = async (
 function minify(text: string) {
   return text?.toString().replace(/\s+/g, " ");
 }
+
+export {
+  type AttributeValue,
+  TemplateAttribute,
+} from "./template_attribute.ts";
+
+export { TemplateString } from "./template_string.ts";
