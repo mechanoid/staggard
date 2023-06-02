@@ -168,7 +168,7 @@ Deno.test("render multiple attributes properly encoded", async () => {
 
   assertEquals(
     result,
-    '<input type="text" placeholder="this is a placeholder&amp; text" required="required"  />',
+    '<input type="text" placeholder="this is a placeholder&amp; text" required="required" />',
   );
 });
 

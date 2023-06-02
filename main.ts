@@ -24,13 +24,18 @@ const isAsyncIterator = (thing: unknown) =>
 async function* resolver(
   parts: unknown[] = [],
 ): HTMLTemplateGenerator {
+  let i = 0;
   for (const part of parts) {
     if ((part as TemplateString).isTemplateString) { // just return the static string parts of template literals
       yield part;
     } else if (Array.isArray(part)) { // key is a list of more sub templates, that have to be rendered sequentially
       yield* resolver(part);
     } else if (part instanceof TemplateAttribute) { // key is a list of more sub templates, that have to be rendered sequentially
-      yield part.toString();
+      const nextPart = parts[i + 1];
+
+      yield (nextPart instanceof TemplateAttribute)
+        ? part.toString()
+        : part.toString().trimEnd();
     } else if (
       typeof (part as AsyncGenerator<unknown>)[Symbol.asyncIterator] ===
         "function"
@@ -51,6 +56,7 @@ async function* resolver(
         yield escapeHtml((resolved?.toString()) || "" as string);
       }
     }
+    i++;
   }
 }
 
