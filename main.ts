@@ -135,7 +135,7 @@ export const renderToStream = async (
 };
 
 function minify(text: string) {
-  return text?.toString().replace(/\s+/g, " ");
+  return text?.toString().replace(/\s+/g, " ").replace(/\s>/, ">");
 }
 
 export {

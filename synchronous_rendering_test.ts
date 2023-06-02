@@ -147,10 +147,10 @@ Deno.test("escape attributes properly with conditional props", async () => {
     ${attr("nullish-attribute", null)}
   />`;
 
-  const result = await renderToString(template);
+  const result = await renderToString(template, { minify: true });
 
   assertEquals(
-    result.replaceAll("\n", "").replaceAll(/\s{2,}/g, " "),
+    result,
     '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" />',
   );
 });
@@ -194,22 +194,38 @@ Deno.test("mixing up to arrays, should result in an alternating array", () => {
   );
 });
 
-Deno.test("minify multiline tag with attributes", async () => {
-  const placeholder = "this is a placeholder text";
-  const template = html`<input type="text"
-    ${attr("placeholder", placeholder)}
-    ${attr("fake-false-attribute", "false")}
-    ${attr("falsi-attribute", false)}
-    ${attr("truey-attribute", true)}
-    ${attr("nullish-attribute", null)}
-    ${attr("data-test", 5)}
-  />`;
+Deno.test("minifying", async (t) => {
+  await t.step("minify multiline tag with attributes", async () => {
+    const placeholder = "this is a placeholder text";
+    const template = html`<input type="text"
+      ${attr("placeholder", placeholder)}
+      ${attr("fake-false-attribute", "false")}
+      ${attr("falsi-attribute", false)}
+      ${attr("truey-attribute", true)}
+      ${attr("nullish-attribute", null)}
+      ${attr("data-test", 5)}
+    />`;
 
-  const result = await renderToString(template, { minify: true });
+    const result = await renderToString(template, { minify: true });
 
-  assertEquals(
-    result.replaceAll("\n", "").replaceAll(/\s{2,}/g, " "),
-    '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" truey-attribute data-test="5" />',
+    assertEquals(
+      result,
+      '<input type="text" placeholder="this is a placeholder text" fake-false-attribute="false" truey-attribute data-test="5" />',
+    );
+  });
+
+  await t.step(
+    "pending spaces before (not self closing) tag endings",
+    async () => {
+      const template = html`<button ${null}>label</button>`;
+
+      const result = await renderToString(template, { minify: true });
+
+      assertEquals(
+        result,
+        "<button>label</button>",
+      );
+    },
   );
 });
 
